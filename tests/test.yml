@@ -7,7 +7,6 @@
     lstu_user: root
     lstu_group: root
     lstu_site:
-      host: "lstu.example.com"
       working_dir: "/var/www/lstu.example.com"
       listen: "http://127.0.0.1:8080"
       contact: "admin@lstu.example.com"

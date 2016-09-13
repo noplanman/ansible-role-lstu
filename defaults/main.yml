@@ -7,12 +7,11 @@ lstu_group: www-data
 # Example, check the config file itself for more documentation.
 #lstu_site:
 #  # Required!
-#  host: "example.com"
 #  working_dir: "/var/www/example.com"
 #  listen: "http://127.0.0.1:8080"
 #  contact: "admin@example.com"
 #  secrets: ["array", "of", "random", "secrets"]
 #  # Optional
 #  theme: "default"
-#  adminpwd: "sup3r-secr3t
+#  adminpwd: "sup3r-secr3t"
 #  allowed_domains: []
