@@ -1,0 +1,18 @@
+[Unit]
+Description=Shortened URLs service
+Documentation=https://framagit.org/luc/lstu
+Requires=network.target
+After=network.target
+
+[Service]
+Type=forking
+User={{ lstu_user }}
+RemainAfterExit=yes
+WorkingDirectory={{ lstu_site.working_dir }}/
+PIDFile={{ lstu_site.working_dir }}/script/hypnotoad.pid
+ExecStart=/usr/local/bin/carton exec hypnotoad script/lstu
+ExecStop=/usr/local/bin/carton exec hypnotoad -s script/lstu
+ExecReload=/usr/local/bin/carton exec hypnotoad script/lstu
+
+[Install]
+WantedBy=multi-user.target

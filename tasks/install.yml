@@ -1,0 +1,17 @@
+---
+
+- name: Lstu | Install essential packages
+  apt: name="{{ item }}" state=present update_cache=yes cache_valid_time=3600
+  with_items:
+    - build-essential
+    - git
+    - libssl-dev
+
+- name: Lstu | Install cpanm
+  get_url:
+    url: http://cpanmin.us
+    dest: /usr/local/bin/cpanm
+    mode: 0555
+
+- name: Lstu | Install Carton
+  command: creates=/usr/local/bin/carton cpanm Carton

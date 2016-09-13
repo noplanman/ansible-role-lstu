@@ -1,0 +1,13 @@
+---
+
+- name: Lstu | Copy sysvinit service config
+  template:
+    src: etc/default/lstu.j2
+    dest: "/etc/default/lstu"
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart lstu
+
+- name: Lstu | Copy sysvinit config
+  command: creates=/etc/init.d/lstu cp {{ lstu_site.working_dir }}/utilities/lstu.init /etc/init.d/lstu

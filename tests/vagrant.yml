@@ -1,0 +1,24 @@
+---
+- hosts: all
+  remote_user: vagrant
+  become: yes
+  roles: [../../]
+  vars:
+    lstu_user: root
+    lstu_group: root
+    lstu_site:
+      host: "lstu.example.com"
+      working_dir: "/var/www/lstu.example.com"
+      listen: "http://127.0.0.1:8080"
+      contact: "admin@lstu.example.com"
+      secrets: ["array", "of", "random", "secrets"]
+  post_tasks:
+    - name: Lstu | Wait for the service to start up
+      pause: seconds=5
+    - name: Lstu | Check if lstu is running properly
+      uri: url={{ lstu_site.listen }}
+
+  pre_tasks:
+    - copy:
+        content: 'Acquire::http::Proxy "http://10.0.1.13:3142";'
+        dest: /etc/apt/apt.conf.d/01proxy

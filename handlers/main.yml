@@ -1,0 +1,8 @@
+---
+
+- name: reload systemd daemons
+  command: systemctl daemon-reload
+  notify: restart lstu
+
+- name: restart lstu
+  service: name=lstu state=restarted enabled=yes
