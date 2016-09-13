@@ -10,4 +10,4 @@
   notify: restart lstu
 
 - name: Lstu | Copy sysvinit config
-  command: creates=/etc/init.d/lstu cp {{ lstu_site.working_dir }}/utilities/lstu.init /etc/init.d/lstu
+  command: creates=/etc/init.d/lstu cp {{ lstu_working_dir }}/utilities/lstu.init /etc/init.d/lstu

@@ -22,19 +22,18 @@ lstu_user: www-data
 lstu_group: www-data
 ```
 
-The site itself has a few mandatory and a few optional values.
+There are a few mandatory and many optional values. Check all possible variables in `defaults/main.yml`.
 
 ```
-lstu_site:
-  # Required!
-  working_dir: "/var/www/example.com"
-  listen: "http://127.0.0.1:8080"
-  contact: "admin@example.com"
-  secrets: ["array", "of", "random", "secrets"]
-  # Optional
-  theme: "default"
-  adminpwd: "sup3r-secr3t"
-  allowed_domains: []
+# Required!
+lstu_working_dir: "/var/www/example.com"
+lstu_listen: "http://127.0.0.1:8080"
+lstu_contact: "admin@example.com"
+lstu_secrets: ["array", "of", "random", "secrets"]
+# Optional
+lstu_theme: "default"
+lstu_adminpwd: "sup3r-secr3t"
+lstu_allowed_domains: []
 ```
 
 ## Role Tags
@@ -66,12 +65,11 @@ None.
 ```
 # vars/main.yml
 ---
-lstu_site:
-  working_dir: "/var/www/lstu.example.com"
-  listen: "http://127.0.0.1:8080"
-  contact: "admin@lstu.example.com"
-  secrets: ["Weiboe3a","Ahsahm0O","biPhah2u","Ki2teeph","Choihah4","ka7Oifia","aeT7eeb9","oYah4it7"]
-  adminpwd: "kohdah6DJieSh1CaTe1uWohKax9ahxeG"
+lstu_working_dir: "/var/www/lstu.example.com"
+lstu_listen: "http://127.0.0.1:8080"
+lstu_contact: "admin@lstu.example.com"
+lstu_secrets: ["Weiboe3a","Ahsahm0O","biPhah2u","Ki2teeph","Choihah4","ka7Oifia","aeT7eeb9","oYah4it7"]
+lstu_adminpwd: "kohdah6DJieSh1CaTe1uWohKax9ahxeG"
 ```
 
 ## License

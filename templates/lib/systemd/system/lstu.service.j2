@@ -1,3 +1,5 @@
+# {{ ansible_managed }}
+
 [Unit]
 Description=Shortened URLs service
 Documentation=https://framagit.org/luc/lstu
@@ -8,8 +10,8 @@ After=network.target
 Type=forking
 User={{ lstu_user }}
 RemainAfterExit=yes
-WorkingDirectory={{ lstu_site.working_dir }}/
-PIDFile={{ lstu_site.working_dir }}/script/hypnotoad.pid
+WorkingDirectory={{ lstu_working_dir }}/
+PIDFile={{ lstu_working_dir }}/script/hypnotoad.pid
 ExecStart=/usr/local/bin/carton exec hypnotoad script/lstu
 ExecStop=/usr/local/bin/carton exec hypnotoad -s script/lstu
 ExecReload=/usr/local/bin/carton exec hypnotoad script/lstu

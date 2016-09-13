@@ -6,13 +6,12 @@
   vars:
     lstu_user: root
     lstu_group: root
-    lstu_site:
-      working_dir: "/var/www/lstu.example.com"
-      listen: "http://127.0.0.1:8080"
-      contact: "admin@lstu.example.com"
-      secrets: ["array", "of", "random", "secrets"]
+    lstu_working_dir: "/var/www/lstu.example.com"
+    lstu_listen: "http://127.0.0.1:8080"
+    lstu_contact: "admin@lstu.example.com"
+    lstu_secrets: ["array", "of", "random", "secrets"]
   post_tasks:
     - name: Lstu | Wait for the service to start up
       pause: seconds=5
     - name: Lstu | Check if lstu is running properly
-      uri: url={{ lstu_site.listen }}
+      uri: url={{ lstu_listen }}

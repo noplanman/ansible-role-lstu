@@ -4,14 +4,21 @@
 lstu_user: www-data
 lstu_group: www-data
 
-# Example, check the config file itself for more documentation.
-#lstu_site:
-#  # Required!
-#  working_dir: "/var/www/example.com"
-#  listen: "http://127.0.0.1:8080"
-#  contact: "admin@example.com"
-#  secrets: ["array", "of", "random", "secrets"]
-#  # Optional
-#  theme: "default"
-#  adminpwd: "sup3r-secr3t"
-#  allowed_domains: []
+#  Required, check the config file itself for more documentation.
+#  lstu_working_dir: "/var/www/lstu.example.com"
+#  lstu_listen: "http://127.0.0.1:8080"
+#  lstu_contact: "admin@example.com"
+#  lstu_secrets: ["array", "of", "random", "secrets"]
+
+# Optional
+lstu_proxy: no
+lstu_adminpwd: "sup3r-secr3t"
+lstu_theme: "default"
+lstu_page_offset: 10
+lstu_url_length: 8
+lstu_provis_step: 5
+lstu_provisioning: 100
+lstu_prefix: "/"
+lstu_allowed_domains: []
+lstu_fixed_domain: ""
+lstu_db_path: "lstu.db"

@@ -10,4 +10,4 @@
   notify: restart lstu
 
 - name: Lstu | Copy upstart config
-  command: creates=/etc/init/lstu.conf cp {{ lstu_site.working_dir }}/utilities/lstu_upstart.conf /etc/init/lstu.conf
+  command: creates=/etc/init/lstu.conf cp {{ lstu_working_dir }}/utilities/lstu_upstart.conf /etc/init/lstu.conf

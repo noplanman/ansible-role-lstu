@@ -2,13 +2,13 @@
 
 - name: Lstu | Create working directory
   file:
-    dest: "{{ lstu_site.working_dir }}"
+    dest: "{{ lstu_working_dir }}"
     state: directory
 
 - name: Lstu | Checkout git repository
   git:
     repo: https://framagit.org/noplanman/lstu.git
-    dest: "{{ lstu_site.working_dir }}"
+    dest: "{{ lstu_working_dir }}"
     update: no
     version: housekeeping
   notify: restart lstu
@@ -16,20 +16,20 @@
 - name: Lstu | Copy config
   template:
     src: lstu.conf.j2
-    dest: "{{ lstu_site.working_dir }}/lstu.conf"
+    dest: "{{ lstu_working_dir }}/lstu.conf"
     mode: 0644
   notify: restart lstu
 
 - name: Lstu | Install lstu
   command: carton install
   args:
-    chdir: "{{ lstu_site.working_dir }}"
-    creates: "{{ lstu_site.working_dir }}/lstu.db"
+    chdir: "{{ lstu_working_dir }}"
+    creates: "{{ lstu_db_path }}"
   notify: restart lstu
 
 - name: Lstu | Set permissions on working directory
   file:
-    path: "{{ lstu_site.working_dir }}"
+    path: "{{ lstu_working_dir }}"
     state: directory
     owner: "{{ lstu_user }}"
     group: "{{ lstu_group }}"

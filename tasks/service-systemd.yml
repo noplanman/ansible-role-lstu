@@ -7,4 +7,4 @@
     owner: root
     group: root
     mode: 0644
-  notify: reload systemd daemons
+  notify: reload lstu systemd daemons
