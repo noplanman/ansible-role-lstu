@@ -12,6 +12,6 @@
     lstu_secrets: ["array", "of", "random", "secrets"]
   post_tasks:
     - name: Lstu | Wait for the service to start up
-      pause: seconds=5
+      pause: seconds=11
     - name: Lstu | Check if lstu is running properly
       uri: url={{ lstu_listen }}
