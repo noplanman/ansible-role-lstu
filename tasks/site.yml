@@ -10,6 +10,7 @@
     repo: https://framagit.org/noplanman/lstu.git
     dest: "{{ lstu_working_dir }}"
     update: "{{ lstu_keep_updated }}"
+  register: lstu_git_updated
   notify: restart lstu
 
 - name: Lstu | Copy config
@@ -23,7 +24,7 @@
   command: carton install
   args:
     chdir: "{{ lstu_working_dir }}"
-    creates: "{{ lstu_db_path }}"
+  when: lstu_git_updated.changed
   notify: restart lstu
 
 - name: Lstu | Set permissions on working directory
