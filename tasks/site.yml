@@ -24,7 +24,18 @@
   command: carton install
   args:
     chdir: "{{ lstu_working_dir }}"
+    creates: "{{ lstu_db_path }}"
   when: lstu_git_updated.changed
+  register: lstu_app_installed
+  notify: restart lstu
+
+- name: Lstu | Update lstu
+  command: carton update
+  args:
+    chdir: "{{ lstu_working_dir }}"
+  when: not lstu_app_installed.changed and lstu_keep_updated
+  register: lstu_app_updated
+  changed_when: "'Successfully installed' in lstu_app_updated.stdout"
   notify: restart lstu
 
 - name: Lstu | Set permissions on working directory
