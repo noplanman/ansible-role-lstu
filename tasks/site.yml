@@ -10,6 +10,7 @@
     repo: https://framagit.org/noplanman/lstu.git
     dest: "{{ lstu_working_dir }}"
     update: "{{ lstu_keep_updated }}"
+    force: yes
   register: lstu_git_updated
   notify: restart lstu
 
