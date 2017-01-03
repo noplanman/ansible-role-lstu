@@ -9,8 +9,7 @@
   git:
     repo: https://framagit.org/noplanman/lstu.git
     dest: "{{ lstu_working_dir }}"
-    update: no
-    version: housekeeping
+    update: "{{ lstu_keep_updated }}"
   notify: restart lstu
 
 - name: Lstu | Copy config

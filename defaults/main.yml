@@ -4,6 +4,9 @@
 lstu_user: www-data
 lstu_group: www-data
 
+lstu_keep_updated: no
+lstu_hash_adminpwd: yes
+
 #  Required, check the config file itself for more documentation.
 #  lstu_working_dir: "/var/www/lstu.example.com"
 #  lstu_listen: "http://127.0.0.1:8080"
@@ -22,3 +25,6 @@ lstu_prefix: "/"
 lstu_allowed_domains: []
 lstu_fixed_domain: ""
 lstu_db_path: "lstu.db"
+lstu_ban_min_strike: 3
+lstu_piwik_url: ""
+lstu_piwik_idsite: ""

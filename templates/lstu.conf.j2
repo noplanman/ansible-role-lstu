@@ -25,10 +25,21 @@
     #secrets        => ['fdjsofjoihrei'],
     secrets => {{ lstu_secrets | to_json }},
 
-    # secret passphrase to access some admin features
-    # optional, but you won't have access to admin /stats if not set
+    # If you don't want to have a plain text password in configuration,
+    # use hashed_adminpwd instead
+    # optional, but you won't have access to admin /stats if not set and if hashed_adminpwd is not set either
     #adminpwd      => 's3cr3T',
+{% if lstu_adminpwd != '' and not lstu_hash_adminpwd %}
     adminpwd => '{{ lstu_adminpwd }}',
+{% endif %}
+
+    # secret hashed passphrase to access some admin features
+    # Hash your password by issuing `echo -n s3cr3T | sha256sum` on your terminal
+    # optional, but you won't have access to admin /stats if not set and if adminpwd is not set either
+    #hashed_adminpwd => '94b2feede6ea5e2eec62f457ecb7d3f719b24d19c29d4e5466246a31908fc23b',
+{% if lstu_adminpwd != '' and lstu_hash_adminpwd %}
+    hashed_adminpwd => '{{ lstu_adminpwd|hash('sha256') }}',
+{% endif %}
 
     # choose a theme. See the available themes in `themes` directory
     # optional, default is 'default'
@@ -79,4 +90,28 @@
     # optional, default is lstu.db
     #db_path           => 'lstu.db',
     db_path => '{{ lstu_db_path }}',
+
+    # Rate-limiting for the API
+    # After ban_min_strike requests in a second, the IP address will be
+    # banned for one hour.
+    # If it continues to query the API during this ban time at least
+    # ban_min_strike times, it will be banned for a month.
+    # optional, default is 3
+    #ban_min_strike    => 3,
+    ban_min_strike => {{ lstu_ban_min_strike }},
+
+    # define an URL to the Piwik instance and the ID of a website to track
+    # set if you want to track views in Piwik
+    # optional, Piwik tracking is disabled by default
+    #piwik => {
+    #    url    => 'http://piwik.example.com',
+    #    idsite => '1',
+    #}
+{% if lstu_piwik_url != '' and lstu_piwik_idsite != '' %}
+    piwik => {
+        url    => '{{ lstu_piwik_url }}',
+        idsite => '{{ lstu_piwik_idsite }}',
+    }
+{% endif %}
+    
 };
