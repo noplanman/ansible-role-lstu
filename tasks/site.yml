@@ -41,5 +41,4 @@
     owner: "{{ lstu_user }}"
     group: "{{ lstu_group }}"
     recurse: yes
-  register: lstu_ownership_set
-  changed_when: lstu_ownership_set.diff.after|to_json != lstu_ownership_set.diff.before|to_json
+  changed_when: no
