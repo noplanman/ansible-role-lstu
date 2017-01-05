@@ -1,10 +1,5 @@
 ---
 
-- name: Lstu | Create working directory
-  file:
-    dest: "{{ lstu_working_dir }}"
-    state: directory
-
 - name: Lstu | Checkout git repository
   git:
     repo: https://framagit.org/noplanman/lstu.git
@@ -12,6 +7,7 @@
     update: "{{ lstu_keep_updated }}"
     force: yes
   register: lstu_git_updated
+  changed_when: lstu_git_updated.after != lstu_git_updated.before
   notify: restart lstu
 
 - name: Lstu | Copy config
@@ -26,7 +22,6 @@
   args:
     chdir: "{{ lstu_working_dir }}"
     creates: "{{ lstu_db_path }}"
-  when: lstu_git_updated.changed
   register: lstu_app_installed
   notify: restart lstu
 
@@ -34,15 +29,17 @@
   command: carton update
   args:
     chdir: "{{ lstu_working_dir }}"
-  when: not lstu_app_installed.changed and lstu_keep_updated
+  when: lstu_app_installed.changed or lstu_keep_updated
   register: lstu_app_updated
   changed_when: "'Successfully installed' in lstu_app_updated.stdout"
   notify: restart lstu
 
-- name: Lstu | Set permissions on working directory
+- name: Lstu | Set ownership on working directory
   file:
     path: "{{ lstu_working_dir }}"
     state: directory
     owner: "{{ lstu_user }}"
     group: "{{ lstu_group }}"
     recurse: yes
+  register: lstu_ownership_set
+  changed_when: lstu_ownership_set.diff.after|to_json != lstu_ownership_set.diff.before|to_json
