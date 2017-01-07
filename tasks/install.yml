@@ -1,7 +1,11 @@
 ---
 
+- name: Lstu | Update apt cache
+  apt: update_cache=yes cache_valid_time=86400
+  changed_when: no
+
 - name: Lstu | Install essential packages
-  apt: name="{{ item }}" state=present update_cache=yes cache_valid_time=3600
+  apt: name="{{ item }}" state=present
   with_items:
     - build-essential
     - git
@@ -9,7 +13,7 @@
 
 - name: Lstu | Install cpanm
   get_url:
-    url: http://cpanmin.us
+    url: https://cpanmin.us
     dest: /usr/local/bin/cpanm
     mode: 0555
 
