@@ -22,6 +22,18 @@ lstu_user: www-data
 lstu_group: www-data
 ```
 
+Set if Lstu should be kept up to date. (default: no)
+
+```
+lstu_keep_updated: no
+```
+
+If the admin password should be saved in a hashed format. *(`lstu_adminpwd` must always be the clear-text password!)*
+ 
+```
+lstu_hash_adminpwd: yes
+```
+
 There are a few mandatory and many optional values. Check all possible variables in `defaults/main.yml`.
 
 ```
@@ -30,10 +42,23 @@ lstu_working_dir: "/var/www/example.com"
 lstu_listen: "http://127.0.0.1:8080"
 lstu_contact: "admin@example.com"
 lstu_secrets: ["array", "of", "random", "secrets"]
+
 # Optional
-lstu_theme: "default"
+lstu_proxy: no
 lstu_adminpwd: "sup3r-secr3t"
+lstu_theme: "default"
+lstu_page_offset: 10
+lstu_url_length: 8
+lstu_provis_step: 5
+lstu_provisioning: 100
+lstu_prefix: "/"
 lstu_allowed_domains: []
+lstu_fixed_domain: ""
+lstu_db_path: "lstu.db"
+lstu_ban_min_strike: 3
+lstu_piwik_url: ""
+lstu_piwik_idsite: ""
+
 ```
 
 ## Role Tags
@@ -41,9 +66,9 @@ lstu_allowed_domains: []
 Each part of the setup has a tag.
 
 ```
-lstu.install
-lstu.site
-lstu.service
+lstu:install
+lstu:site
+lstu:service
 ```
 
 ## Dependencies

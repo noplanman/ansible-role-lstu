@@ -1,8 +1,8 @@
 ---
 
 - include: install.yml
-  tags: lstu.install
+  tags: lstu:install
 - include: site.yml
-  tags: lstu.site
+  tags: lstu:site
 - include: service-{{ ansible_service_mgr }}.yml
-  tags: lstu.service
+  tags: lstu:service

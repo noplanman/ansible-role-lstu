@@ -3,7 +3,7 @@
 - name: Lstu | Copy systemd service config
   template:
     src: lib/systemd/system/lstu.service.j2
-    dest: "/lib/systemd/system/lstu.service"
+    dest: /lib/systemd/system/lstu.service
     owner: root
     group: root
     mode: 0644

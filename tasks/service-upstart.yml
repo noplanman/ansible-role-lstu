@@ -3,7 +3,7 @@
 - name: Lstu | Copy upstart service config
   template:
     src: etc/default/lstu.j2
-    dest: "/etc/default/lstu"
+    dest: /etc/default/lstu
     owner: root
     group: root
     mode: 0644

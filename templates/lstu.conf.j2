@@ -38,7 +38,7 @@
     # optional, but you won't have access to admin /stats if not set and if adminpwd is not set either
     #hashed_adminpwd => '94b2feede6ea5e2eec62f457ecb7d3f719b24d19c29d4e5466246a31908fc23b',
 {% if lstu_adminpwd != '' and lstu_hash_adminpwd %}
-    hashed_adminpwd => '{{ lstu_adminpwd|hash('sha256') }}',
+    hashed_adminpwd => '{{ lstu_adminpwd | hash('sha256') }}',
 {% endif %}
 
     # choose a theme. See the available themes in `themes` directory
