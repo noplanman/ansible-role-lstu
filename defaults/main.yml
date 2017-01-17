@@ -14,17 +14,17 @@ lstu_hash_adminpwd: yes
 #  lstu_secrets: ["array", "of", "random", "secrets"]
 
 # Optional
-lstu_proxy: no
-lstu_adminpwd: "sup3r-secr3t"
-lstu_theme: "default"
-lstu_page_offset: 10
-lstu_url_length: 8
-lstu_provis_step: 5
-lstu_provisioning: 100
-lstu_prefix: "/"
-lstu_allowed_domains: []
-lstu_fixed_domain: ""
 lstu_db_path: "lstu.db"
-lstu_ban_min_strike: 3
-lstu_piwik_url: ""
-lstu_piwik_idsite: ""
+#lstu_proxy: no
+#lstu_adminpwd: "sup3r-secr3t"
+#lstu_theme: "default"
+#lstu_page_offset: 10
+#lstu_url_length: 8
+#lstu_provis_step: 5
+#lstu_provisioning: 100
+#lstu_prefix: "/"
+#lstu_allowed_domains: []
+#lstu_fixed_domain: ""
+#lstu_ban_min_strike: 3
+#lstu_piwik_url: ""
+#lstu_piwik_idsite: ""
