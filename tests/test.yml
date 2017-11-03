@@ -10,6 +10,21 @@
     lstu_listen: "http://127.0.0.1:8080"
     lstu_contact: "admin@lstu.example.com"
     lstu_secrets: ["array", "of", "random", "secrets"]
+
+  pre_tasks:
+    # See https://github.com/ansible/ansible/issues/32001
+    - name: Quick fix for incorrect service manager (Ubuntu 14.04)
+      set_fact: ansible_service_mgr="upstart"
+      when: ansible_distribution_release == 'trusty'
+
+    - name: Update apt cache.
+      apt: update_cache=yes cache_valid_time=600
+      when: ansible_os_family == 'Debian'
+      changed_when: false
+
+    - name: Ensure build dependencies are installed.
+      package: name=curl state=present
+
   post_tasks:
     - name: Lstu | Wait for the service to start up
       pause: seconds=11

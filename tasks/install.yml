@@ -10,7 +10,7 @@
     - build-essential
     - git
     - libssl-dev
-    - libpng12-dev # for QR code generation
+    - libpng-dev # for QR code generation
     - libpq-dev # required for Mojo::PG (even if PGSQL won't be used)
 
 - name: Lstu | Install cpanm
