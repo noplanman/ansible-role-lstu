@@ -53,12 +53,39 @@ lstu_provis_step: 5
 lstu_provisioning: 100
 lstu_prefix: "/"
 lstu_allowed_domains: []
-lstu_fixed_domain: ""
+lstu_fixed_domain: "example.org"
+lstu_db_type: "sqlite"
 lstu_db_path: "lstu.db"
+lstu_pgdb:
+    database: "lstu"
+    host: "localhost"
+    user: "DBUSER"
+    pwd: "DBPASSWORD"
+lstu_mysqldb:
+    database: "lstu"
+    host: "localhost"
+    user: "DBUSER"
+    pwd: "DBPASSWORD"
 lstu_ban_min_strike: 3
-lstu_piwik_url: ""
-lstu_piwik_idsite: ""
-
+lstu_ban_whitelist: []
+lstu_piwik:
+    url: "http://piwik.example.com"
+    idsite: "1"
+minion:
+    enabled: no,
+    db_path: "minion.db"
+lstu_ldap:
+    uri: "ldaps://ldap.example.org"
+    user_tree: "ou=users,dc=example,dc=org"
+    bind_dn: ",ou=users,dc=example,dc=org"
+    bind_user: "uid=ldap_user"
+    bind_pwd: "secr3t"
+    user_filter: "!(uid=ldap_user)"
+lstu_htpasswd: "lstu.passwd"
+lstu_session_duration: 3600
+lstu_spam_blacklist_regex: "foo|bar"
+lstu_spam_whitelist_regex: "foo|bar"
+lstu_skip_spamhaus: no
 ```
 
 ## Role Tags

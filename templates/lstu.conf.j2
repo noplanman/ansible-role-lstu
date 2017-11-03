@@ -28,9 +28,10 @@
 
     # array of random strings used to encrypt cookies
     # optional, default is ['fdjsofjoihrei'], PLEASE, CHANGE IT
-    #secrets        => ['fdjsofjoihrei'],
-    secrets => {{ lstu_secrets | to_json }},
+    #secret        => ['fdjsofjoihrei'],
+    secret => {{ lstu_secrets | to_json }},
 
+    # secret passphrase to access some admin features
     # If you don't want to have a plain text password in configuration,
     # use hashed_adminpwd instead
     # optional, but you won't have access to admin /stats if not set and if hashed_adminpwd is not set either
@@ -106,12 +107,59 @@
     fixed_domain => '{{ lstu_fixed_domain }}',
 {% endif %}
 
+    # choose what database you want to use
+    # valid choices are sqlite, postgresql and mysql (all lowercase)
+    # optional, default is sqlite
+    #dbtype => 'sqlite',
+{% if lstu_db_type is defined %}
+    dbtype => '{{ lstu_db_type }}',
+{% endif %}
+
+    # SQLite ONLY - only used if dbtype is set to sqlite
     # define a path to the SQLite database
     # you can define it relative to lstu directory or set an absolute path
     # remember that it has to be in a directory writable by Lstu user
     # optional, default is lstu.db
     #db_path           => 'lstu.db',
+{% if (lstu_db_type is not defined or lstu_db_type == 'sqlite') and lstu_db_path is defined %}
     db_path => '{{ lstu_db_path }}',
+{% endif %}
+
+    # PostgreSQL ONLY - only used if dbtype is set to postgresql
+    # these are the credentials to access the PostgreSQL database
+    # mandatory if you choosed postgresql as dbtype
+    #pgdb => {
+    #    database => 'lstu',
+    #    host     => 'localhost',
+    #    #user     => 'DBUSER',
+    #    #pwd      => 'DBPASSWORD'
+    #},
+{% if lstu_db_type is defined and lstu_db_type == 'postgresql' and lstu_pgdb is mapping %}
+    pgdb => {
+        {{ "database => '%s'," % lstu_pgdb.database if lstu_pgdb.database }}
+        {{ "host     => '%s'," % lstu_pgdb.host     if lstu_pgdb.host }}
+        {{ "user     => '%s'," % lstu_pgdb.user     if lstu_pgdb.user }}
+        {{ "pwd      => '%s'," % lstu_pgdb.pwd      if lstu_pgdb.pwd }}
+    },
+{% endif %}
+
+    # MySQL ONLY - only used if dbtype is set to mysql
+    # these are the credentials to access the MySQL database
+    # mandatory if you choosed mysql as dbtype
+    #mysqldb => {
+    #    database => 'lstu',
+    #    host     => 'localhost',
+    #    #user     => 'DBUSER',
+    #    #pwd      => 'DBPASSWORD'
+    #},
+{% if lstu_db_type is defined and lstu_db_type == 'mysql' and lstu_mysqldb is mapping %}
+    mysqldb => {
+        {{ "database => '%s'," % lstu_mysqldb.database if lstu_mysqldb.database }}
+        {{ "host     => '%s'," % lstu_mysqldb.host     if lstu_mysqldb.host }}
+        {{ "user     => '%s'," % lstu_mysqldb.user     if lstu_mysqldb.user }}
+        {{ "pwd      => '%s'," % lstu_mysqldb.pwd      if lstu_mysqldb.pwd }}
+    },
+{% endif %}
 
     # Rate-limiting for the API
     # After ban_min_strike requests in a second, the IP address will be
@@ -124,17 +172,114 @@
     ban_min_strike => {{ lstu_ban_min_strike }},
 {% endif %}
 
+    # Ban whitelist
+    # You can whitelist IP addresses to prevent you from being banned
+    # Be careful, the IP addresses are compared as string, not as IP addresses
+    # a network range will not work
+    # Example of valid input: ban_whitelist => ['198.51.100.42', '2001:0DB8::42'],
+    # optional, default is an empty array
+    #ban_whitelist => [],
+{% if lstu_ban_whitelist is defined %}
+    ban_whitelist => {{ lstu_ban_whitelist | to_json }},
+{% endif %}
+
     # define an URL to the Piwik instance and the ID of a website to track
     # set if you want to track views in Piwik
     # optional, Piwik tracking is disabled by default
     #piwik => {
     #    url    => 'http://piwik.example.com',
     #    idsite => '1',
-    #}
-{% if lstu_piwik_url is defined and lstu_piwik_idsite is defined %}
+    #},
+{% if lstu_piwik is mapping %}
+    piwik => {
+        {{ "url    => '%s'," % lstu_piwik.url    if lstu_piwik.url }}
+        {{ "idsite => '%s'," % lstu_piwik.idsite if lstu_piwik.idsite }}
+    },
+{% elif lstu_piwik_url is defined and lstu_piwik_idsite is defined %}
     piwik => {
         url    => '{{ lstu_piwik_url }}',
         idsite => '{{ lstu_piwik_idsite }}',
-    }
+    },
+{% endif %}
+
+    # use Minion instead of directly increase counters
+    # need to launch a minion worker service if enabled
+    # optional, Minion is disabled by default
+    #minion => {
+    #    enabled => 0,
+    #    db_path => 'minion.db' # you can define it relative to lstu directory or set an absolute path
+    #},
+{% if lstu_minion is mapping %}
+    minion => {
+        {{ "enabled => %s,"   % lstu_minion.enabled | ternary(1,0) if lstu_minion.enabled is defined }}
+        {{ "db_path => '%s'," % lstu_minion.db_path                if lstu_minion.db_path }}
+    },
+{% endif %}
+
+    # set `ldap` if you want that only authenticated users can shorten URLs
+    # please note that everybody can still use shortend URLs
+    # optional, no default
+    #ldap => {
+    #    uri         => 'ldaps://ldap.example.org',
+    #    user_tree   => 'ou=users,dc=example,dc=org',
+    #    bind_dn     => ',ou=users,dc=example,dc=org',
+    #    bind_user   => 'uid=ldap_user',
+    #    bind_pwd    => 'secr3t',
+    #    user_filter => '!(uid=ldap_user)'
+    #},
+{% if lstu_ldap is mapping %}
+    ldap => {
+        {{ "uri         => '%s'," % lstu_ldap.uri         if lstu_ldap.uri         }}
+        {{ "user_tree   => '%s'," % lstu_ldap.user_tree   if lstu_ldap.user_tree   }}
+        {{ "bind_dn     => '%s'," % lstu_ldap.bind_dn     if lstu_ldap.bind_dn     }}
+        {{ "bind_user   => '%s'," % lstu_ldap.bind_user   if lstu_ldap.bind_user   }}
+        {{ "bind_pwd    => '%s'," % lstu_ldap.bind_pwd    if lstu_ldap.bind_pwd    }}
+        {{ "user_filter => '%s'," % lstu_ldap.user_filter if lstu_ldap.user_filter }}
+    },
+{% endif %}
+
+    # set `htpasswd` if you want to use an htpasswd file instead of ldap
+    # create the file with `htpasswd -c lstu.passwd user`, update it with `htpasswd lstu.passwd user2`
+    # make sure that lstu can read the file!
+    # optional, no default
+    #htpasswd => 'lstu.passwd',
+{% if lstu_htpasswd is defined %}
+    htpasswd => '{{ lstu_htpasswd }}',
+{% endif %}
+
+    # if you've set ldap or htpasswd above, the session will last `session_duration` seconds before
+    # the user needs to reauthenticate
+    # optional, default is 3600
+    #session_duration => 3600,
+{% if lstu_session_duration is defined %}
+    session_duration => {{ lstu_session_duration }},
+{% endif %}
+
+    # how many redirections are allowed for the shortened URL before considering it as a spam?
+    # optional, default is 2. Set to -1 to allow infinite redirections (not recommended)
+    #max_redir => 2,
+{% if lstu_max_redir is defined %}
+    max_redir => {{ lstu_max_redir }},
+{% endif %}
+
+    # spam blacklist regex. All URLs (or redirection) whose host part matches this regex are considered as spam
+    # optional, no default
+    #spam_blacklist_regex => 'foo|bar',
+{% if lstu_spam_blacklist_regex is defined %}
+    spam_blacklist_regex => '{{ lstu_spam_blacklist_regex }}',
+{% endif %}
+
+    # spam whitelist regex. All URLs (or redirection) whose host part matches this regex will never be considered as spam
+    # optional, no default
+    #spam_whitelist_regex => 'foo|bar',
+{% if lstu_spam_whitelist_regex is defined %}
+    spam_whitelist_regex => '{{ lstu_spam_whitelist_regex }}',
+{% endif %}
+
+    # set to 1 to skip SpamHaus check (not recommended)
+    # optional, default is 0
+    #skip_spamhaus => 0,
+{% if lstu_skip_spamhaus is defined %}
+    skip_spamhaus => {{ lstu_skip_spamhaus | ternary(1,0) }},
 {% endif %}
 };
