@@ -39,7 +39,7 @@ There are a few mandatory and many optional values. Check all possible variables
 ```
 # Required!
 lstu_working_dir: "/var/www/example.com"
-lstu_listen: "http://127.0.0.1:8080"
+lstu_listen: "http://127.0.0.1:8080"    # Or an array, if multiple addresses.
 lstu_contact: "admin@example.com"
 lstu_secrets: ["array", "of", "random", "secrets"]
 

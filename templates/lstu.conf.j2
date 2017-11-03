@@ -8,7 +8,11 @@
     # see http://mojolicio.us/perldoc/Mojo/Server/Hypnotoad for a full list of settings
     hypnotoad => {
         # array of IP addresses and ports you want to listen to
+{% if lstu_listen is string %}
         listen => ['{{ lstu_listen }}'],
+{% else %}
+        listen => {{ lstu_listen | to_json }},
+{% endif %}
         # if you use Lstu behind a reverse proxy like Nginx, you want to set proxy to 1
         # if you use Lstu directly, let it commented
         #proxy  => 1,
