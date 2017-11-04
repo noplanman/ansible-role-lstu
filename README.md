@@ -39,7 +39,7 @@ There are a few mandatory and many optional values. Check all possible variables
 ```
 # Required!
 lstu_working_dir: "/var/www/example.com"
-lstu_listen: "http://127.0.0.1:8080"
+lstu_listen: "http://127.0.0.1:8080"    # Or an array, if multiple addresses.
 lstu_contact: "admin@example.com"
 lstu_secrets: ["array", "of", "random", "secrets"]
 
@@ -53,12 +53,39 @@ lstu_provis_step: 5
 lstu_provisioning: 100
 lstu_prefix: "/"
 lstu_allowed_domains: []
-lstu_fixed_domain: ""
+lstu_fixed_domain: "example.org"
+lstu_db_type: "sqlite"
 lstu_db_path: "lstu.db"
+lstu_pgdb:
+    database: "lstu"
+    host: "localhost"
+    user: "DBUSER"
+    pwd: "DBPASSWORD"
+lstu_mysqldb:
+    database: "lstu"
+    host: "localhost"
+    user: "DBUSER"
+    pwd: "DBPASSWORD"
 lstu_ban_min_strike: 3
-lstu_piwik_url: ""
-lstu_piwik_idsite: ""
-
+lstu_ban_whitelist: []
+lstu_piwik:
+    url: "http://piwik.example.com"
+    idsite: "1"
+minion:
+    enabled: no,
+    db_path: "minion.db"
+lstu_ldap:
+    uri: "ldaps://ldap.example.org"
+    user_tree: "ou=users,dc=example,dc=org"
+    bind_dn: ",ou=users,dc=example,dc=org"
+    bind_user: "uid=ldap_user"
+    bind_pwd: "secr3t"
+    user_filter: "!(uid=ldap_user)"
+lstu_htpasswd: "lstu.passwd"
+lstu_session_duration: 3600
+lstu_spam_blacklist_regex: "foo|bar"
+lstu_spam_whitelist_regex: "foo|bar"
+lstu_skip_spamhaus: no
 ```
 
 ## Role Tags
@@ -95,6 +122,21 @@ lstu_listen: "http://127.0.0.1:8080"
 lstu_contact: "admin@lstu.example.com"
 lstu_secrets: ["Weiboe3a","Ahsahm0O","biPhah2u","Ki2teeph","Choihah4","ka7Oifia","aeT7eeb9","oYah4it7"]
 lstu_adminpwd: "kohdah6DJieSh1CaTe1uWohKax9ahxeG"
+```
+
+## Tests
+
+Docker is used to test the role with different operating systems.
+Unfortunately this doesn't work with boot2docker for MacOS. My current workaround is to have a vagrant machine with docker installed, from which I call the tests. (Yes, a virtual container within a virtual machine...)
+
+*(from `.travis.yml`)*
+```bash
+$ wget -O ${PWD}/tests/test.sh https://gist.githubusercontent.com/noplanman/40e96f31ee2301469769d4236aff40e2/raw/
+$ chmod +x ${PWD}/tests/test.sh
+$ distro=ubuntu1604 ${PWD}/tests/test.sh
+$ distro=ubuntu1404 ${PWD}/tests/test.sh
+$ distro=debian9 ${PWD}/tests/test.sh
+$ distro=debian8 ${PWD}/tests/test.sh
 ```
 
 ## License
