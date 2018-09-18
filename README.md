@@ -67,14 +67,19 @@ lstu_db_path: "lstu.db"
 lstu_pgdb:
     database: "lstu"
     host: "localhost"
+    port: 5432
     user: "DBUSER"
     pwd: "DBPASSWORD"
+    max_connections: 1
 lstu_mysqldb:
     database: "lstu"
     host: "localhost"
+    port: 3306
     user: "DBUSER"
     pwd: "DBPASSWORD"
+    max_connections: 5
 lstu_ban_min_strike: 3
+lstu_ban_blacklist: []
 lstu_ban_whitelist: []
 lstu_piwik:
     url: "http://piwik.example.com"
@@ -82,18 +87,39 @@ lstu_piwik:
 minion:
     enabled: no,
     db_path: "minion.db"
+    pgdb:
+        database: "lstu_minion"
+        host: "localhost"
+        port: 5432
+        user: "DBUSER"
+        pwd: "DBPASSWORD"
+    mysqldb:
+        database: "lstu_minion"
+        host: "localhost"
+        port: 3306
+        user: "DBUSER"
+        pwd: "DBPASSWORD"
 lstu_ldap:
     uri: "ldaps://ldap.example.org"
     user_tree: "ou=users,dc=example,dc=org"
-    bind_dn: ",ou=users,dc=example,dc=org"
-    bind_user: "uid=ldap_user"
+    bind_dn: "uid=ldap_user,ou=users,dc=example,dc=org"
     bind_pwd: "secr3t"
-    user_filter: "!(uid=ldap_user)"
+    user_attr: "uid"
+    user_filter: "(!(uid=ldap_user))"
 lstu_htpasswd: "lstu.passwd"
 lstu_session_duration: 3600
+lstu_max_redir: 2
 lstu_spam_blacklist_regex: "foo|bar"
+lstu_spam_path_blacklist_regex: "foo|bar"
 lstu_spam_whitelist_regex: "foo|bar"
 lstu_skip_spamhaus: no
+lstu_safebrowsing_api_key: ""
+lstu_memcached_servers: []
+lstu_csp: "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; form-action 'self'; base-uri 'self'"
+lstu_x_frame_options: "DENY"
+lstu_x_content_type_options: "nosniff"
+lstu_x_xss_protection: "1; mode=block"
+lstu_log_creator_ip: no
 ```
 
 ## Role Tags

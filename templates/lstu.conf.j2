@@ -131,15 +131,21 @@
     #pgdb => {
     #    database => 'lstu',
     #    host     => 'localhost',
-    #    #user     => 'DBUSER',
-    #    #pwd      => 'DBPASSWORD'
+    #    # optional, default is 5432
+    #    #port     => 5432,
+    #    user     => 'DBUSER',
+    #    pwd      => 'DBPASSWORD',
+    #    # optional, default is 1
+    #    #max_connections => 1,
     #},
 {% if lstu_db_type is defined and lstu_db_type == 'postgresql' and lstu_pgdb is mapping %}
     pgdb => {
         {{ "database => '%s'," % lstu_pgdb.database if lstu_pgdb.database }}
         {{ "host     => '%s'," % lstu_pgdb.host     if lstu_pgdb.host }}
+        {{ "port     => %s,"   % lstu_pgdb.port     if lstu_pgdb.port }}
         {{ "user     => '%s'," % lstu_pgdb.user     if lstu_pgdb.user }}
         {{ "pwd      => '%s'," % lstu_pgdb.pwd      if lstu_pgdb.pwd }}
+        {{ "max_connections => %s," % lstu_pgdb.max_connections if lstu_pgdb.max_connections }}
     },
 {% endif %}
 
@@ -149,15 +155,21 @@
     #mysqldb => {
     #    database => 'lstu',
     #    host     => 'localhost',
-    #    #user     => 'DBUSER',
-    #    #pwd      => 'DBPASSWORD'
+    #    # optional, default is 3306
+    #    #port     => 3306,
+    #    user     => 'DBUSER',
+    #    pwd      => 'DBPASSWORD',
+    #    # optional, default is 5 (set to 0 to disable persistent connections)
+    #    #max_connections => 5,
     #},
 {% if lstu_db_type is defined and lstu_db_type == 'mysql' and lstu_mysqldb is mapping %}
     mysqldb => {
         {{ "database => '%s'," % lstu_mysqldb.database if lstu_mysqldb.database }}
         {{ "host     => '%s'," % lstu_mysqldb.host     if lstu_mysqldb.host }}
+        {{ "port     => %s,"   % lstu_mysqldb.port     if lstu_mysqldb.port }}
         {{ "user     => '%s'," % lstu_mysqldb.user     if lstu_mysqldb.user }}
         {{ "pwd      => '%s'," % lstu_mysqldb.pwd      if lstu_mysqldb.pwd }}
+        {{ "max_connections => %s," % lstu_mysqldb.max_connections if lstu_mysqldb.max_connections }}
     },
 {% endif %}
 
@@ -170,6 +182,17 @@
     #ban_min_strike    => 3,
 {% if lstu_ban_min_strike is defined %}
     ban_min_strike => {{ lstu_ban_min_strike }},
+{% endif %}
+
+    # Ban blacklist
+    # You can blacklist IP addresses to always ban those IP addresses
+    # Be careful, the IP addresses are compared as string, not as IP addresses
+    # a network range will not work
+    # Example of valid input: ban_blacklist => ['198.51.100.42', '2001:0DB8::42'],¬
+    # optional, default is an empty array
+    #ban_blacklist => [],
+{% if lstu_ban_blacklist is defined %}
+    ban_blacklist => {{ lstu_ban_blacklist | to_json }},
 {% endif %}
 
     # Ban whitelist
@@ -205,14 +228,61 @@
     # use Minion instead of directly increase counters
     # need to launch a minion worker service if enabled
     # optional, Minion is disabled by default
+    # It will use the same DB type as Lstu: sqlite if you choose sqlite for `dbtype`,
+    # postgresql for postgresql, etc.
     #minion => {
     #    enabled => 0,
-    #    db_path => 'minion.db' # you can define it relative to lstu directory or set an absolute path
+    #    # SQLite ONLY - only used if if you choose sqlite as DB type,
+    #    # define the path to the minion database
+    #    # you can define it relative to lstu directory or set an absolute path
+    #    # remember that it has to be in a directory writable by Lutim user
+    #    # optional, default is minion.db
+    #    db_path => 'minion.db',
+    #    # PostgreSQL ONLY - only used if you choose postgresql as DB type
+    #    # these are the credentials to access the Minion's PostgreSQL database
+    #    # mandatory if you choosed postgresql as DB type, no default
+    #    pgdb => {
+    #        database => 'lstu_minion',
+    #        host     => 'localhost',
+    #        # optional, default is 5432
+    #        #port     => 5432,
+    #        user     => 'DBUSER',
+    #        pwd      => 'DBPASSWORD'
+    #    },
+    #    # MySQL ONLY - only used if you choose mysql as DB type
+    #    # these are the credentials to access the Minion's MySQL database
+    #    # mandatory if you choosed mysql as DB type, no default
+    #    mysqldb => {
+    #        database => 'lstu_minion',
+    #        host     => 'localhost',
+    #        # optional, default is 3306
+    #        #port     => 3306,
+    #        user     => 'DBUSER',
+    #        pwd      => 'DBPASSWORD',
+    #    },
     #},
 {% if lstu_minion is mapping %}
     minion => {
         {{ "enabled => %s,"   % lstu_minion.enabled | ternary(1,0) if lstu_minion.enabled is defined }}
         {{ "db_path => '%s'," % lstu_minion.db_path                if lstu_minion.db_path }}
+{% if lstu_db_type is defined and lstu_db_type == 'postgresql' and lstu_minion.pgdb is defined and lstu_minion.pgdb is mapping %}
+        pgdb => {
+            {{ "database => '%s'," % lstu_minion.pgdb.database if lstu_minion.pgdb.database }}
+            {{ "host     => '%s'," % lstu_minion.pgdb.host     if lstu_minion.pgdb.host }}
+            {{ "port     => %s,"   % lstu_minion.pgdb.port     if lstu_minion.pgdb.port }}
+            {{ "user     => '%s'," % lstu_minion.pgdb.user     if lstu_minion.pgdb.user }}
+            {{ "pwd      => '%s'," % lstu_minion.pgdb.pwd      if lstu_minion.pgdb.pwd }}
+        },
+{% endif %}
+{% if lstu_db_type is defined and lstu_db_type == 'mysql' and lstu_minion.mysqldb is defined and lstu_minion.mysqldb is mapping %}
+        mysqldb => {
+            {{ "database => '%s'," % lstu_minion.mysqldb.database if lstu_minion.mysqldb.database }}
+            {{ "host     => '%s'," % lstu_minion.mysqldb.host     if lstu_minion.mysqldb.host }}
+            {{ "port     => %s,"   % lstu_minion.mysqldb.port     if lstu_minion.mysqldb.port }}
+            {{ "user     => '%s'," % lstu_minion.mysqldb.user     if lstu_minion.mysqldb.user }}
+            {{ "pwd      => '%s'," % lstu_minion.mysqldb.pwd      if lstu_minion.mysqldb.pwd }}
+        },
+{% endif %}
     },
 {% endif %}
 
@@ -220,20 +290,20 @@
     # please note that everybody can still use shortend URLs
     # optional, no default
     #ldap => {
-    #    uri         => 'ldaps://ldap.example.org',
-    #    user_tree   => 'ou=users,dc=example,dc=org',
-    #    bind_dn     => ',ou=users,dc=example,dc=org',
-    #    bind_user   => 'uid=ldap_user',
-    #    bind_pwd    => 'secr3t',
-    #    user_filter => '!(uid=ldap_user)'
+    #    uri         => 'ldaps://ldap.example.org',                 # server URI
+    #    user_tree   => 'ou=users,dc=example,dc=org',               # search base DN
+    #    bind_dn     => 'uid=ldap_user,ou=users,dc=example,dc=org', # search bind DN
+    #    bind_pwd    => 'secr3t',                                   # search bind password
+    #    user_attr   => 'uid',                                      # user attribute (uid, mail, sAMAccountName, etc.)
+    #    user_filter => '(!(uid=ldap_user))',                       # user filter (to exclude some users, etc.)
     #},
 {% if lstu_ldap is mapping %}
     ldap => {
         {{ "uri         => '%s'," % lstu_ldap.uri         if lstu_ldap.uri         }}
         {{ "user_tree   => '%s'," % lstu_ldap.user_tree   if lstu_ldap.user_tree   }}
         {{ "bind_dn     => '%s'," % lstu_ldap.bind_dn     if lstu_ldap.bind_dn     }}
-        {{ "bind_user   => '%s'," % lstu_ldap.bind_user   if lstu_ldap.bind_user   }}
         {{ "bind_pwd    => '%s'," % lstu_ldap.bind_pwd    if lstu_ldap.bind_pwd    }}
+        {{ "user_attr   => '%s'," % lstu_ldap.user_attr   if lstu_ldap.user_attr   }}
         {{ "user_filter => '%s'," % lstu_ldap.user_filter if lstu_ldap.user_filter }}
     },
 {% endif %}
@@ -269,6 +339,13 @@
     spam_blacklist_regex => '{{ lstu_spam_blacklist_regex }}',
 {% endif %}
 
+    # spam path blacklist regex. All URLs (or redirection) whose path part matches this regex are considered as spam
+    # optional, no default
+    #spam_path_blacklist_regex => 'foo|bar',
+{% if lstu_spam_path_blacklist_regex is defined %}
+    spam_path_blacklist_regex => '{{ lstu_spam_path_blacklist_regex }}',
+{% endif %}
+
     # spam whitelist regex. All URLs (or redirection) whose host part matches this regex will never be considered as spam
     # optional, no default
     #spam_whitelist_regex => 'foo|bar',
@@ -281,5 +358,73 @@
     #skip_spamhaus => 0,
 {% if lstu_skip_spamhaus is defined %}
     skip_spamhaus => {{ lstu_skip_spamhaus | ternary(1,0) }},
+{% endif %}
+
+    # put your Google API key to enable Google safebrowsing check
+    # This will allow Lstu to download the Google safebrowsing database and use a local copy to check the URLs.
+    # Google does not get the URLs that are checked.
+    # Instructions to get a key: https://developers.google.com/safe-browsing/v4/get-started
+    # TL;DR: https://console.developers.google.com/projectselector/apis/library
+    # optional, no default
+    #safebrowsing_api_key => '',
+{% if lstu_safebrowsing_api_key is defined %}
+    safebrowsing_api_key => '{{ lstu_safebrowsing_api_key }}',
+{% endif %}
+
+    # array of memcached servers to cache URL in order to accelerate responses to often-viewed URL.
+    # If set to [], the cache is disabled
+    # optional, default is []
+    #memcached_servers => [],
+{% if lstu_memcached_servers is defined %}
+    memcached_servers => {{ lstu_memcached_servers | to_json }},
+{% endif %}
+
+    # Content-Security-Policy header that will be sent by Lstu
+    # Set to '' to disable CSP header
+    # https://content-security-policy.com/ provides a good documentation about CSP.
+    # https://report-uri.com/home/generate provides a tool to generate a CSP header.
+    # optional, default is "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; form-action 'self'; base-uri 'self'"
+    # the default value is good for `default` and `milligram` themes
+    #csp => "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; form-action 'self'; base-uri 'self'",
+{% if lstu_csp is defined %}
+    csp => "{{ lstu_csp }}",
+{% endif %}
+
+    # X-Frame-Options header that will be sent by Lstu
+    # Valid values are: 'DENY', 'SAMEORIGIN', 'ALLOW-FROM https://example.com/'
+    # Set to '' to disable X-Frame-Options header
+    # See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
+    # Please note that this will add a "frame-ancestors" directive to the CSP header (see above) accordingly
+    # to the chosen setting (See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/frame-ancestors)
+    # optional, default is 'DENY'
+    #x_frame_options => 'DENY',
+{% if lstu_x_frame_options is defined %}
+    x_frame_options => '{{ lstu_x_frame_options }}',
+{% endif %}
+
+    # X-Content-Type-Options that will be sent by Lstu
+    # See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
+    # Set to '' to disable X-Content-Type-Options header
+    # optional, default is 'nosniff'
+    #x_content_type_options => 'nosniff',
+{% if lstu_x_content_type_options is defined %}
+    x_content_type_options => '{{ lstu_x_content_type_options }}',
+{% endif %}
+
+    # X-XSS-Protection that will be sent by Lstu
+    # See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
+    # Set to '' to disable X-XSS-Protection header
+    # optional, default is '1; mode=block'
+    #x_xss_protection => '1; mode=block',
+{% if lstu_x_xss_protection is defined %}
+    x_xss_protection => '{{ lstu_x_xss_protection }}',
+{% endif %}
+
+    # Log creator's IP address
+    # Set to 1 if you want to register the IP addresses of URL creators
+    # optional, default is 0
+    #log_creator_ip => 0,
+{% if lstu_log_creator_ip is defined %}
+    log_creator_ip => {{ lstu_log_creator_ip | ternary(1,0) }},
 {% endif %}
 };
