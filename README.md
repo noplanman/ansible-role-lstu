@@ -1,9 +1,17 @@
 # Ansible Role for Lstu (Let's Shorten That URL)
 
-[![Build Status](https://travis-ci.org/noplanman/ansible-lstu.svg?branch=master)](https://travis-ci.org/noplanman/ansible-lstu)
+[![Build Status][travis-build-status]][travis-tests]
 
-Installs and configures Lstu on Debian/Ubuntu servers.
-Find out more about Lstu [here](https://framagit.org/luc/lstu), created by [Luc Didry](https://framagit.org/u/luc).
+---
+
+:rocket: Development has moved to **[git.feneas.org]**.
+
+(The repository on GitHub is only a mirror, so fork on Feneas to contribute. No registration needed, just sign in with your GitHub account.)
+
+---
+
+This role installs and configures Lstu on Debian/Ubuntu servers.
+Find out more about [Lstu], created by [Luc Didry].
 
 This role will automatically install a service that will start when the server boots up.
 It will figure out which service manager is being used automatically too.
@@ -11,7 +19,7 @@ It will figure out which service manager is being used automatically too.
 ## Requirements
 
 Using this role doesn't install Nginx or Apache as a reverse proxy, you need to do that yourself!
-An example configuration for Nginx can be found [here](https://framagit.org/luc/lstu/blob/master/utilities/lstu.nginx).
+Take a look at the [example configurations].
 
 ## Role Variables
 
@@ -29,12 +37,12 @@ lstu_keep_updated: no
 ```
 
 If the admin password should be saved in a hashed format. *(`lstu_adminpwd` must always be the clear-text password!)*
- 
+
 ```
 lstu_hash_adminpwd: yes
 ```
 
-There are a few mandatory and many optional values. Check all possible variables in `defaults/main.yml`.
+There are a few mandatory and many optional values. Check all possible variables in [`defaults/main.yml`][defaults].
 
 ```
 # Required!
@@ -127,7 +135,6 @@ lstu_adminpwd: "kohdah6DJieSh1CaTe1uWohKax9ahxeG"
 ## Tests
 
 Docker is used to test the role with different operating systems.
-Unfortunately this doesn't work with boot2docker for MacOS. My current workaround is to have a vagrant machine with docker installed, from which I call the tests. (Yes, a virtual container within a virtual machine...)
 
 *(from `.travis.yml`)*
 ```bash
@@ -142,3 +149,11 @@ $ distro=debian8 ${PWD}/tests/test.sh
 ## License
 
 MIT
+
+[travis-build-status]: https://travis-ci.org/noplanman/ansible-role-lstu.svg?branch=master "Travis-CI Build Status"
+[travis-tests]: https://travis-ci.org/noplanman/ansible-role-lstu "Travis-CI Tests"
+[git.feneas.org]: https://git.feneas.org/noplanman/ansible-role-lstu "Ansible Role Lstu on Feneas"
+[Lstu]: https://framagit.org/luc/lstu "Lstu on Framagit"
+[Luc Didry]: https://framagit.org/u/luc "Luc on Framagit"
+[example configurations]: https://framagit.org/luc/lstu/blob/master/utilities/ "Example configurations"
+[defaults]: https://git.feneas.org/noplanman/ansible-role-lstu/blob/master/defaults/main.yml "Default variables"

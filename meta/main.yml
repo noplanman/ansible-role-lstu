@@ -2,8 +2,9 @@
 dependencies: []
 
 galaxy_info:
+  role_name: lstu
+  description: Install and run Lstu on a Debian-like system.
   author: Armando Lüscher
-  description: Install and run lstu on a Debian-like system.
   license: MIT
   min_ansible_version: 2.0.0.0
   platforms:
