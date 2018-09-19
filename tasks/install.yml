@@ -12,7 +12,7 @@
     - libssl-dev
     - libpng-dev # for QR code generation
     - libpq-dev # required for Mojo::PG (even if PGSQL won't be used)
-    - libmysqld-dev # required for Mojo::mysql (even if MySQL won't be used)
+    - "{{ 'default-libmysqlclient-dev' if ansible_distribution_release == 'stretch' else 'libmysqld-dev' }}" # required for Mojo::mysql (even if MySQL won't be used)
 
 - name: Lstu | Install cpanm
   get_url:
