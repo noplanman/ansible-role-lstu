@@ -1,6 +1,6 @@
 # Ansible Role for Lstu (Let's Shorten That URL)
 
-[![Build Status][travis-build-status]][travis-tests]
+[![Build Status][travis-build-status]][travis-tests] [![Ansible Role][ansible-role-shield]][ansible-role]
 
 ---
 
@@ -162,24 +162,19 @@ lstu_adminpwd: "kohdah6DJieSh1CaTe1uWohKax9ahxeG"
 
 Docker is used to test the role with different operating systems.
 
-*(from `.travis.yml`)*
-```bash
-$ wget -O ${PWD}/tests/test.sh https://gist.githubusercontent.com/noplanman/40e96f31ee2301469769d4236aff40e2/raw/
-$ chmod +x ${PWD}/tests/test.sh
-$ distro=ubuntu1604 ${PWD}/tests/test.sh
-$ distro=ubuntu1404 ${PWD}/tests/test.sh
-$ distro=debian9 ${PWD}/tests/test.sh
-$ distro=debian8 ${PWD}/tests/test.sh
-```
+Check the [`tests`] folder.
 
 ## License
 
 MIT
 
-[travis-build-status]: https://travis-ci.org/noplanman/ansible-role-lstu.svg?branch=master "Travis-CI Build Status"
+[travis-build-status]: https://img.shields.io/travis/noplanman/ansible-role-lstu.svg?style=flat-square "Travis-CI Build Status"
 [travis-tests]: https://travis-ci.org/noplanman/ansible-role-lstu "Travis-CI Tests"
+[ansible-role-shield]: https://img.shields.io/ansible/role/12072.svg?style=flat-square "Lstu on Ansible Galaxy"
+[ansible-role]: https://galaxy.ansible.com/noplanman/lstu "Lstu on Ansible Galaxy"
 [git.feneas.org]: https://git.feneas.org/noplanman/ansible-role-lstu "Ansible Role Lstu on Feneas"
 [Lstu]: https://framagit.org/luc/lstu "Lstu on Framagit"
 [Luc Didry]: https://framagit.org/u/luc "Luc on Framagit"
 [example configurations]: https://framagit.org/luc/lstu/blob/master/utilities/ "Example configurations"
 [defaults]: https://git.feneas.org/noplanman/ansible-role-lstu/blob/master/defaults/main.yml "Default variables"
+[`tests`]: https://git.feneas.org/noplanman/ansible-role-lstu/tree/master/tests "Tests"
