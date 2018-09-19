@@ -1,2 +1,2 @@
 *.retry
-test.sh
+tests/test.sh
