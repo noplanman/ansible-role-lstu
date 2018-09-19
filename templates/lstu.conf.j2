@@ -1,222 +1,57 @@
 # {{ ansible_managed }}
 
-# vim:set sw=4 ts=4 sts=4 ft=perl expandtab:
+####################
+# Get the in-depth version with detailed explanations here:
+# https://framagit.org/luc/lstu/blob/master/lstu.conf.template
+####################
+
 {
-    ####################
-    # Hypnotoad settings
-    ####################
-    # see http://mojolicio.us/perldoc/Mojo/Server/Hypnotoad for a full list of settings
     hypnotoad => {
-        # array of IP addresses and ports you want to listen to
-{% if lstu_listen is string %}
-        listen => ['{{ lstu_listen }}'],
-{% else %}
-        listen => {{ lstu_listen | to_json }},
-{% endif %}
-        # if you use Lstu behind a reverse proxy like Nginx, you want to set proxy to 1
-        # if you use Lstu directly, let it commented
-        #proxy  => 1,
-{% if lstu_proxy is defined %}
-        proxy => {{ lstu_proxy | ternary(1,0) }},
-{% endif %}
+        listen => {{ [lstu_listen] | flatten | to_json }},
+{{ "        proxy => %s," % lstu_proxy | ternary(1,0) if lstu_proxy is defined else "" }}
     },
-
-    # put a way to contact you here and uncomment it
-    # MANDATORY
-    #contact       => 'admin[at]example.com',
     contact => '{{ lstu_contact }}',
-
-    # array of random strings used to encrypt cookies
-    # optional, default is ['fdjsofjoihrei'], PLEASE, CHANGE IT
-    #secret        => ['fdjsofjoihrei'],
     secret => {{ lstu_secrets | to_json }},
 
-    # secret passphrase to access some admin features
-    # If you don't want to have a plain text password in configuration,
-    # use hashed_adminpwd instead
-    # optional, but you won't have access to admin /stats if not set and if hashed_adminpwd is not set either
-    #adminpwd      => 's3cr3T',
-{% if lstu_adminpwd is defined and lstu_adminpwd != '' and not lstu_hash_adminpwd %}
-    adminpwd => '{{ lstu_adminpwd }}',
-{% endif %}
-
-    # secret hashed passphrase to access some admin features
-    # Hash your password by issuing `echo -n s3cr3T | sha256sum` on your terminal
-    # optional, but you won't have access to admin /stats if not set and if adminpwd is not set either
-    #hashed_adminpwd => '94b2feede6ea5e2eec62f457ecb7d3f719b24d19c29d4e5466246a31908fc23b',
-{% if lstu_adminpwd is defined and lstu_adminpwd != '' and lstu_hash_adminpwd %}
-    hashed_adminpwd => '{{ lstu_adminpwd | hash('sha256') }}',
-{% endif %}
-
-    # choose a theme. See the available themes in `themes` directory
-    # optional, default is 'default'
-    #theme         => 'default',
-{% if lstu_theme is defined %}
-    theme => '{{ lstu_theme }}',
-{% endif %}
-
-    # number of URLs to be displayed per page in /stats
-    # optional, default is 10
-    #page_offset   => 10,
-{% if lstu_page_offset is defined %}
-    page_offset => {{ lstu_page_offset }},
-{% endif %}
-
-    # length of the random URL
-    # optional, default is 8
-    #length            => 8,
-{% if lstu_url_length is defined %}
-    length => {{ lstu_url_length }},
-{% endif %}
-
-    # how many URLs will be provisioned in a batch ?
-    # optional, default is 5
-    #provis_step       => 5,
-{% if lstu_provis_step is defined %}
-    provis_step => {{ lstu_provis_step }},
-{% endif %}
-
-    # max number of URLs to be provisioned
-    # optional, default is 100
-    #provisioning      => 100,
-{% if lstu_provisioning is defined %}
-    provisioning => {{ lstu_provisioning }},
-{% endif %}
-
-    # URL sub-directory in which you want Lstu to be accessible
-    # example: you want to have Lstu under https://example.org/lstu/
-    # => set prefix to '/lstu' or to '/lstu/', it doesn't matter
-    # optional, defaut is /
-    #prefix        => '/',
-{% if lstu_prefix is defined %}
-    prefix => '{{ lstu_prefix }}',
-{% endif %}
-
-    # array of authorized domains for API calls.
-    # if you want to authorize everyone to use the API: ['*']
-    # optional, no domains allowed by default
-    #allowed_domains   => ['http://1.example.com', 'http://2.example.com'],
-{% if lstu_allowed_domains is defined %}
-    allowed_domains => {{ lstu_allowed_domains | to_json }},
-{% endif %}
-
-    # if set, the shortened URLs will use this domain
-    # optional
-    #fixed_domain => 'example.org',
-{% if lstu_fixed_domain is defined %}
-    fixed_domain => '{{ lstu_fixed_domain }}',
-{% endif %}
-
-    # choose what database you want to use
-    # valid choices are sqlite, postgresql and mysql (all lowercase)
-    # optional, default is sqlite
-    #dbtype => 'sqlite',
-{% if lstu_db_type is defined %}
-    dbtype => '{{ lstu_db_type }}',
-{% endif %}
-
-    # SQLite ONLY - only used if dbtype is set to sqlite
-    # define a path to the SQLite database
-    # you can define it relative to lstu directory or set an absolute path
-    # remember that it has to be in a directory writable by Lstu user
-    # optional, default is lstu.db
-    #db_path           => 'lstu.db',
-{% if (lstu_db_type is not defined or lstu_db_type == 'sqlite') and lstu_db_path is defined %}
-    db_path => '{{ lstu_db_path }}',
-{% endif %}
-
-    # PostgreSQL ONLY - only used if dbtype is set to postgresql
-    # these are the credentials to access the PostgreSQL database
-    # mandatory if you choosed postgresql as dbtype
-    #pgdb => {
-    #    database => 'lstu',
-    #    host     => 'localhost',
-    #    # optional, default is 5432
-    #    #port     => 5432,
-    #    user     => 'DBUSER',
-    #    pwd      => 'DBPASSWORD',
-    #    # optional, default is 1
-    #    #max_connections => 1,
-    #},
+{{ "    adminpwd => '%s',"        %  lstu_adminpwd                  if lstu_adminpwd is defined and lstu_adminpwd != '' and not lstu_hash_adminpwd else "" }}
+{{ "    hashed_adminpwd => '%s'," %  lstu_adminpwd | hash('sha256') if lstu_adminpwd is defined and lstu_adminpwd != '' and lstu_hash_adminpwd     else "" }}
+{{ "    theme => '%s',"           %  lstu_theme                     if lstu_theme is defined           else "" }}
+{{ "    page_offset => %s,"       %  lstu_page_offset               if lstu_page_offset is defined     else "" }}
+{{ "    length => %s,"            %  lstu_url_length                if lstu_url_length is defined      else "" }}
+{{ "    provis_step => %s,"       %  lstu_provis_step               if lstu_provis_step is defined     else "" }}
+{{ "    provisioning => %s,"      %  lstu_provisioning              if lstu_provisioning is defined    else "" }}
+{{ "    prefix => '%s',"          %  lstu_prefix                    if lstu_prefix is defined          else "" }}
+{{ "    allowed_domains => %s,"   %  lstu_allowed_domains | to_json if lstu_allowed_domains is defined else "" }}
+{{ "    fixed_domain => '%s',"    %  lstu_fixed_domain              if lstu_fixed_domain is defined    else "" }}
+{{ "    dbtype => '%s',"          %  lstu_db_type                   if lstu_db_type is defined         else "" }}
+{{ "    db_path => '%s',"         %  lstu_db_path                   if (lstu_db_type is not defined or lstu_db_type == 'sqlite') and lstu_db_path is defined else "" }}
 {% if lstu_db_type is defined and lstu_db_type == 'postgresql' and lstu_pgdb is mapping %}
     pgdb => {
-        {{ "database => '%s'," % lstu_pgdb.database if lstu_pgdb.database }}
-        {{ "host     => '%s'," % lstu_pgdb.host     if lstu_pgdb.host }}
-        {{ "port     => %s,"   % lstu_pgdb.port     if lstu_pgdb.port }}
-        {{ "user     => '%s'," % lstu_pgdb.user     if lstu_pgdb.user }}
-        {{ "pwd      => '%s'," % lstu_pgdb.pwd      if lstu_pgdb.pwd }}
-        {{ "max_connections => %s," % lstu_pgdb.max_connections if lstu_pgdb.max_connections }}
+        {{ "database => '%s'," % lstu_pgdb.database if lstu_pgdb.database is defined else "" }}
+        {{ "host     => '%s'," % lstu_pgdb.host     if lstu_pgdb.host is defined     else "" }}
+        {{ "port     => %s,"   % lstu_pgdb.port     if lstu_pgdb.port is defined     else "" }}
+        {{ "user     => '%s'," % lstu_pgdb.user     if lstu_pgdb.user is defined     else "" }}
+        {{ "pwd      => '%s'," % lstu_pgdb.pwd      if lstu_pgdb.pwd is defined      else "" }}
+        {{ "max_connections => %s," % lstu_pgdb.max_connections if lstu_pgdb.max_connections else "" }}
     },
 {% endif %}
-
-    # MySQL ONLY - only used if dbtype is set to mysql
-    # these are the credentials to access the MySQL database
-    # mandatory if you choosed mysql as dbtype
-    #mysqldb => {
-    #    database => 'lstu',
-    #    host     => 'localhost',
-    #    # optional, default is 3306
-    #    #port     => 3306,
-    #    user     => 'DBUSER',
-    #    pwd      => 'DBPASSWORD',
-    #    # optional, default is 5 (set to 0 to disable persistent connections)
-    #    #max_connections => 5,
-    #},
 {% if lstu_db_type is defined and lstu_db_type == 'mysql' and lstu_mysqldb is mapping %}
     mysqldb => {
-        {{ "database => '%s'," % lstu_mysqldb.database if lstu_mysqldb.database }}
-        {{ "host     => '%s'," % lstu_mysqldb.host     if lstu_mysqldb.host }}
-        {{ "port     => %s,"   % lstu_mysqldb.port     if lstu_mysqldb.port }}
-        {{ "user     => '%s'," % lstu_mysqldb.user     if lstu_mysqldb.user }}
-        {{ "pwd      => '%s'," % lstu_mysqldb.pwd      if lstu_mysqldb.pwd }}
-        {{ "max_connections => %s," % lstu_mysqldb.max_connections if lstu_mysqldb.max_connections }}
+        {{ "database => '%s'," % lstu_mysqldb.database if lstu_mysqldb.database is defined else "" }}
+        {{ "host     => '%s'," % lstu_mysqldb.host     if lstu_mysqldb.host is defined     else "" }}
+        {{ "port     => %s,"   % lstu_mysqldb.port     if lstu_mysqldb.port is defined     else "" }}
+        {{ "user     => '%s'," % lstu_mysqldb.user     if lstu_mysqldb.user is defined     else "" }}
+        {{ "pwd      => '%s'," % lstu_mysqldb.pwd      if lstu_mysqldb.pwd is defined      else "" }}
+        {{ "max_connections => %s," % lstu_mysqldb.max_connections if lstu_mysqldb.max_connections else "" }}
     },
 {% endif %}
-
-    # Rate-limiting for the API
-    # After ban_min_strike requests in a second, the IP address will be
-    # banned for one hour.
-    # If it continues to query the API during this ban time at least
-    # ban_min_strike times, it will be banned for a month.
-    # optional, default is 3
-    #ban_min_strike    => 3,
-{% if lstu_ban_min_strike is defined %}
-    ban_min_strike => {{ lstu_ban_min_strike }},
-{% endif %}
-
-    # Ban blacklist
-    # You can blacklist IP addresses to always ban those IP addresses
-    # Be careful, the IP addresses are compared as string, not as IP addresses
-    # a network range will not work
-    # Example of valid input: ban_blacklist => ['198.51.100.42', '2001:0DB8::42'],¬
-    # optional, default is an empty array
-    #ban_blacklist => [],
-{% if lstu_ban_blacklist is defined %}
-    ban_blacklist => {{ lstu_ban_blacklist | to_json }},
-{% endif %}
-
-    # Ban whitelist
-    # You can whitelist IP addresses to prevent you from being banned
-    # Be careful, the IP addresses are compared as string, not as IP addresses
-    # a network range will not work
-    # Example of valid input: ban_whitelist => ['198.51.100.42', '2001:0DB8::42'],
-    # optional, default is an empty array
-    #ban_whitelist => [],
-{% if lstu_ban_whitelist is defined %}
-    ban_whitelist => {{ lstu_ban_whitelist | to_json }},
-{% endif %}
-
-    # define an URL to the Piwik instance and the ID of a website to track
-    # set if you want to track views in Piwik
-    # optional, Piwik tracking is disabled by default
-    #piwik => {
-    #    url    => 'http://piwik.example.com',
-    #    idsite => '1',
-    #},
+{{ "    ban_min_strike => %s," % lstu_ban_min_strike          if lstu_ban_min_strike is defined else "" }}
+{{ "    ban_blacklist => %s,"  % lstu_ban_blacklist | to_json if lstu_ban_blacklist is defined  else "" }}
+{{ "    ban_whitelist => %s,"  % lstu_ban_whitelist | to_json if lstu_ban_whitelist is defined  else "" }}
 {% if lstu_piwik is mapping %}
     piwik => {
-        {{ "url    => '%s'," % lstu_piwik.url    if lstu_piwik.url }}
-        {{ "idsite => '%s'," % lstu_piwik.idsite if lstu_piwik.idsite }}
+        {{ "url    => '%s'," % lstu_piwik.url    if lstu_piwik.url is defined    else "" }}
+        {{ "idsite => '%s'," % lstu_piwik.idsite if lstu_piwik.idsite is defined else "" }}
     },
 {% elif lstu_piwik_url is defined and lstu_piwik_idsite is defined %}
     piwik => {
@@ -224,207 +59,52 @@
         idsite => '{{ lstu_piwik_idsite }}',
     },
 {% endif %}
-
-    # use Minion instead of directly increase counters
-    # need to launch a minion worker service if enabled
-    # optional, Minion is disabled by default
-    # It will use the same DB type as Lstu: sqlite if you choose sqlite for `dbtype`,
-    # postgresql for postgresql, etc.
-    #minion => {
-    #    enabled => 0,
-    #    # SQLite ONLY - only used if if you choose sqlite as DB type,
-    #    # define the path to the minion database
-    #    # you can define it relative to lstu directory or set an absolute path
-    #    # remember that it has to be in a directory writable by Lutim user
-    #    # optional, default is minion.db
-    #    db_path => 'minion.db',
-    #    # PostgreSQL ONLY - only used if you choose postgresql as DB type
-    #    # these are the credentials to access the Minion's PostgreSQL database
-    #    # mandatory if you choosed postgresql as DB type, no default
-    #    pgdb => {
-    #        database => 'lstu_minion',
-    #        host     => 'localhost',
-    #        # optional, default is 5432
-    #        #port     => 5432,
-    #        user     => 'DBUSER',
-    #        pwd      => 'DBPASSWORD'
-    #    },
-    #    # MySQL ONLY - only used if you choose mysql as DB type
-    #    # these are the credentials to access the Minion's MySQL database
-    #    # mandatory if you choosed mysql as DB type, no default
-    #    mysqldb => {
-    #        database => 'lstu_minion',
-    #        host     => 'localhost',
-    #        # optional, default is 3306
-    #        #port     => 3306,
-    #        user     => 'DBUSER',
-    #        pwd      => 'DBPASSWORD',
-    #    },
-    #},
 {% if lstu_minion is mapping %}
     minion => {
-        {{ "enabled => %s,"   % lstu_minion.enabled | ternary(1,0) if lstu_minion.enabled is defined }}
-        {{ "db_path => '%s'," % lstu_minion.db_path                if lstu_minion.db_path }}
+        {{ "enabled => %s,"   % lstu_minion.enabled | ternary(1,0) if lstu_minion.enabled is defined else "" }}
+        {{ "db_path => '%s'," % lstu_minion.db_path                if lstu_minion.db_path is defined else "" }}
 {% if lstu_db_type is defined and lstu_db_type == 'postgresql' and lstu_minion.pgdb is defined and lstu_minion.pgdb is mapping %}
         pgdb => {
-            {{ "database => '%s'," % lstu_minion.pgdb.database if lstu_minion.pgdb.database }}
-            {{ "host     => '%s'," % lstu_minion.pgdb.host     if lstu_minion.pgdb.host }}
-            {{ "port     => %s,"   % lstu_minion.pgdb.port     if lstu_minion.pgdb.port }}
-            {{ "user     => '%s'," % lstu_minion.pgdb.user     if lstu_minion.pgdb.user }}
-            {{ "pwd      => '%s'," % lstu_minion.pgdb.pwd      if lstu_minion.pgdb.pwd }}
+            {{ "database => '%s'," % lstu_minion.pgdb.database if lstu_minion.pgdb.database is defined else "" }}
+            {{ "host     => '%s'," % lstu_minion.pgdb.host     if lstu_minion.pgdb.host is defined     else "" }}
+            {{ "port     => %s,"   % lstu_minion.pgdb.port     if lstu_minion.pgdb.port is defined     else "" }}
+            {{ "user     => '%s'," % lstu_minion.pgdb.user     if lstu_minion.pgdb.user is defined     else "" }}
+            {{ "pwd      => '%s'," % lstu_minion.pgdb.pwd      if lstu_minion.pgdb.pwd is defined      else "" }}
         },
 {% endif %}
 {% if lstu_db_type is defined and lstu_db_type == 'mysql' and lstu_minion.mysqldb is defined and lstu_minion.mysqldb is mapping %}
         mysqldb => {
-            {{ "database => '%s'," % lstu_minion.mysqldb.database if lstu_minion.mysqldb.database }}
-            {{ "host     => '%s'," % lstu_minion.mysqldb.host     if lstu_minion.mysqldb.host }}
-            {{ "port     => %s,"   % lstu_minion.mysqldb.port     if lstu_minion.mysqldb.port }}
-            {{ "user     => '%s'," % lstu_minion.mysqldb.user     if lstu_minion.mysqldb.user }}
-            {{ "pwd      => '%s'," % lstu_minion.mysqldb.pwd      if lstu_minion.mysqldb.pwd }}
+            {{ "database => '%s'," % lstu_minion.mysqldb.database if lstu_minion.mysqldb.database is defined else "" }}
+            {{ "host     => '%s'," % lstu_minion.mysqldb.host     if lstu_minion.mysqldb.host is defined     else "" }}
+            {{ "port     => %s,"   % lstu_minion.mysqldb.port     if lstu_minion.mysqldb.port is defined     else "" }}
+            {{ "user     => '%s'," % lstu_minion.mysqldb.user     if lstu_minion.mysqldb.user is defined     else "" }}
+            {{ "pwd      => '%s'," % lstu_minion.mysqldb.pwd      if lstu_minion.mysqldb.pwd is defined      else "" }}
         },
 {% endif %}
     },
 {% endif %}
-
-    # set `ldap` if you want that only authenticated users can shorten URLs
-    # please note that everybody can still use shortend URLs
-    # optional, no default
-    #ldap => {
-    #    uri         => 'ldaps://ldap.example.org',                 # server URI
-    #    user_tree   => 'ou=users,dc=example,dc=org',               # search base DN
-    #    bind_dn     => 'uid=ldap_user,ou=users,dc=example,dc=org', # search bind DN
-    #    bind_pwd    => 'secr3t',                                   # search bind password
-    #    user_attr   => 'uid',                                      # user attribute (uid, mail, sAMAccountName, etc.)
-    #    user_filter => '(!(uid=ldap_user))',                       # user filter (to exclude some users, etc.)
-    #},
 {% if lstu_ldap is mapping %}
     ldap => {
-        {{ "uri         => '%s'," % lstu_ldap.uri         if lstu_ldap.uri         }}
-        {{ "user_tree   => '%s'," % lstu_ldap.user_tree   if lstu_ldap.user_tree   }}
-        {{ "bind_dn     => '%s'," % lstu_ldap.bind_dn     if lstu_ldap.bind_dn     }}
-        {{ "bind_pwd    => '%s'," % lstu_ldap.bind_pwd    if lstu_ldap.bind_pwd    }}
-        {{ "user_attr   => '%s'," % lstu_ldap.user_attr   if lstu_ldap.user_attr   }}
-        {{ "user_filter => '%s'," % lstu_ldap.user_filter if lstu_ldap.user_filter }}
+        {{ "uri         => '%s'," % lstu_ldap.uri         if lstu_ldap.uri is defined         else "" }}
+        {{ "user_tree   => '%s'," % lstu_ldap.user_tree   if lstu_ldap.user_tree is defined   else "" }}
+        {{ "bind_dn     => '%s'," % lstu_ldap.bind_dn     if lstu_ldap.bind_dn is defined     else "" }}
+        {{ "bind_pwd    => '%s'," % lstu_ldap.bind_pwd    if lstu_ldap.bind_pwd is defined    else "" }}
+        {{ "user_attr   => '%s'," % lstu_ldap.user_attr   if lstu_ldap.user_attr is defined   else "" }}
+        {{ "user_filter => '%s'," % lstu_ldap.user_filter if lstu_ldap.user_filter is defined else "" }}
     },
 {% endif %}
-
-    # set `htpasswd` if you want to use an htpasswd file instead of ldap
-    # create the file with `htpasswd -c lstu.passwd user`, update it with `htpasswd lstu.passwd user2`
-    # make sure that lstu can read the file!
-    # optional, no default
-    #htpasswd => 'lstu.passwd',
-{% if lstu_htpasswd is defined %}
-    htpasswd => '{{ lstu_htpasswd }}',
-{% endif %}
-
-    # if you've set ldap or htpasswd above, the session will last `session_duration` seconds before
-    # the user needs to reauthenticate
-    # optional, default is 3600
-    #session_duration => 3600,
-{% if lstu_session_duration is defined %}
-    session_duration => {{ lstu_session_duration }},
-{% endif %}
-
-    # how many redirections are allowed for the shortened URL before considering it as a spam?
-    # optional, default is 2. Set to -1 to allow infinite redirections (not recommended)
-    #max_redir => 2,
-{% if lstu_max_redir is defined %}
-    max_redir => {{ lstu_max_redir }},
-{% endif %}
-
-    # spam blacklist regex. All URLs (or redirection) whose host part matches this regex are considered as spam
-    # optional, no default
-    #spam_blacklist_regex => 'foo|bar',
-{% if lstu_spam_blacklist_regex is defined %}
-    spam_blacklist_regex => '{{ lstu_spam_blacklist_regex }}',
-{% endif %}
-
-    # spam path blacklist regex. All URLs (or redirection) whose path part matches this regex are considered as spam
-    # optional, no default
-    #spam_path_blacklist_regex => 'foo|bar',
-{% if lstu_spam_path_blacklist_regex is defined %}
-    spam_path_blacklist_regex => '{{ lstu_spam_path_blacklist_regex }}',
-{% endif %}
-
-    # spam whitelist regex. All URLs (or redirection) whose host part matches this regex will never be considered as spam
-    # optional, no default
-    #spam_whitelist_regex => 'foo|bar',
-{% if lstu_spam_whitelist_regex is defined %}
-    spam_whitelist_regex => '{{ lstu_spam_whitelist_regex }}',
-{% endif %}
-
-    # set to 1 to skip SpamHaus check (not recommended)
-    # optional, default is 0
-    #skip_spamhaus => 0,
-{% if lstu_skip_spamhaus is defined %}
-    skip_spamhaus => {{ lstu_skip_spamhaus | ternary(1,0) }},
-{% endif %}
-
-    # put your Google API key to enable Google safebrowsing check
-    # This will allow Lstu to download the Google safebrowsing database and use a local copy to check the URLs.
-    # Google does not get the URLs that are checked.
-    # Instructions to get a key: https://developers.google.com/safe-browsing/v4/get-started
-    # TL;DR: https://console.developers.google.com/projectselector/apis/library
-    # optional, no default
-    #safebrowsing_api_key => '',
-{% if lstu_safebrowsing_api_key is defined %}
-    safebrowsing_api_key => '{{ lstu_safebrowsing_api_key }}',
-{% endif %}
-
-    # array of memcached servers to cache URL in order to accelerate responses to often-viewed URL.
-    # If set to [], the cache is disabled
-    # optional, default is []
-    #memcached_servers => [],
-{% if lstu_memcached_servers is defined %}
-    memcached_servers => {{ lstu_memcached_servers | to_json }},
-{% endif %}
-
-    # Content-Security-Policy header that will be sent by Lstu
-    # Set to '' to disable CSP header
-    # https://content-security-policy.com/ provides a good documentation about CSP.
-    # https://report-uri.com/home/generate provides a tool to generate a CSP header.
-    # optional, default is "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; form-action 'self'; base-uri 'self'"
-    # the default value is good for `default` and `milligram` themes
-    #csp => "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; form-action 'self'; base-uri 'self'",
-{% if lstu_csp is defined %}
-    csp => "{{ lstu_csp }}",
-{% endif %}
-
-    # X-Frame-Options header that will be sent by Lstu
-    # Valid values are: 'DENY', 'SAMEORIGIN', 'ALLOW-FROM https://example.com/'
-    # Set to '' to disable X-Frame-Options header
-    # See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
-    # Please note that this will add a "frame-ancestors" directive to the CSP header (see above) accordingly
-    # to the chosen setting (See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/frame-ancestors)
-    # optional, default is 'DENY'
-    #x_frame_options => 'DENY',
-{% if lstu_x_frame_options is defined %}
-    x_frame_options => '{{ lstu_x_frame_options }}',
-{% endif %}
-
-    # X-Content-Type-Options that will be sent by Lstu
-    # See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
-    # Set to '' to disable X-Content-Type-Options header
-    # optional, default is 'nosniff'
-    #x_content_type_options => 'nosniff',
-{% if lstu_x_content_type_options is defined %}
-    x_content_type_options => '{{ lstu_x_content_type_options }}',
-{% endif %}
-
-    # X-XSS-Protection that will be sent by Lstu
-    # See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
-    # Set to '' to disable X-XSS-Protection header
-    # optional, default is '1; mode=block'
-    #x_xss_protection => '1; mode=block',
-{% if lstu_x_xss_protection is defined %}
-    x_xss_protection => '{{ lstu_x_xss_protection }}',
-{% endif %}
-
-    # Log creator's IP address
-    # Set to 1 if you want to register the IP addresses of URL creators
-    # optional, default is 0
-    #log_creator_ip => 0,
-{% if lstu_log_creator_ip is defined %}
-    log_creator_ip => {{ lstu_log_creator_ip | ternary(1,0) }},
-{% endif %}
+{{ "    htpasswd => '%s',"                  % lstu_htpasswd                      if lstu_htpasswd is defined                  else "" }}
+{{ "    session_duration => %s,"            % lstu_session_duration              if lstu_session_duration is defined          else "" }}
+{{ "    max_redir => %s,"                   % lstu_max_redir                     if lstu_max_redir is defined                 else "" }}
+{{ "    spam_blacklist_regex => '%s',"      % lstu_spam_blacklist_regex          if lstu_spam_blacklist_regex is defined      else "" }}
+{{ "    spam_path_blacklist_regex => '%s'," % lstu_spam_path_blacklist_regex     if lstu_spam_path_blacklist_regex is defined else "" }}
+{{ "    spam_whitelist_regex => '%s',"      % lstu_spam_whitelist_regex          if lstu_spam_whitelist_regex is defined      else "" }}
+{{ "    skip_spamhaus => %s,"               % lstu_skip_spamhaus | ternary(1,0)  if lstu_skip_spamhaus is defined             else "" }}
+{{ "    safebrowsing_api_key => '%s',"      % lstu_safebrowsing_api_key          if lstu_safebrowsing_api_key is defined      else "" }}
+{{ "    memcached_servers => %s,"           % lstu_memcached_servers | to_json   if lstu_memcached_servers is defined         else "" }}
+{{ "    csp => \"%s\","                     % lstu_csp                           if lstu_csp is defined                       else "" }}
+{{ "    x_frame_options => '%s',"           % lstu_x_frame_options               if lstu_x_frame_options is defined           else "" }}
+{{ "    x_content_type_options => '%s',"    % lstu_x_content_type_options        if lstu_x_content_type_options is defined    else "" }}
+{{ "    x_xss_protection => '%s',"          % lstu_x_xss_protection              if lstu_x_xss_protection is defined          else "" }}
+{{ "    log_creator_ip => %s,"              % lstu_log_creator_ip | ternary(1,0) if lstu_log_creator_ip is defined            else "" }}
 };
